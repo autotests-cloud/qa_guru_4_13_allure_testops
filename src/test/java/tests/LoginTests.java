@@ -1,6 +1,7 @@
 package tests;
 
 import config.ConfigHelper;
+import io.qameta.allure.AllureId;
 import io.qameta.allure.Feature;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +17,7 @@ import static io.qameta.allure.Allure.step;
 @Feature("Login tests")
 public class LoginTests extends TestBase {
     @Test
-    @DisplayName("Successful login Google account")
+    @DisplayName("Successful login with Google account")
     void loginWithGoogle() {
         step("Open main page", () -> open(""));
 
@@ -27,6 +28,22 @@ public class LoginTests extends TestBase {
         });
 
         step("Verify successful authorization", () ->
+                $(by("data-test-id", "onboarding-geolocation-access")).shouldBe(visible));
+    }
+
+    @Test
+    @AllureId("1875")
+    @DisplayName("Unsuccessful login with Google account")
+    void unsuccessfulLoginWithGoogle() {
+        step("Open main page", () -> open(""));
+
+        step("Fill google auth form", () -> {
+            $(".android.login-button").click();
+            googleAuthPage.login(ConfigHelper.getGoogleUsername(),
+                    "");
+        });
+
+        step("Verify unsuccessful authorization", () ->
                 $(by("data-test-id", "onboarding-geolocation-access")).shouldBe(visible));
     }
 }
